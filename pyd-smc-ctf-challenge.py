@@ -1,14 +1,8 @@
-from statistics import mean
 import hashlib
 from prepare import prepare_const_bytes
 from decider import jdg
-
-
-def read_lyric_txt():
-    with open('lyric.txt', 'rb') as f:
-        data = f.read()
-        data_avg = int(mean(data))
-        return data_avg
+from prepare import is_legal_uname
+from resources import read_lyric_txt
 
 
 def get_hash(s: str):
@@ -26,13 +20,13 @@ def main():
         uname = input('Plz input user name: ')
         if input_to_quit(uname):
             return
-        if not uname.isascii():
+        if not is_legal_uname(uname):
             print(f'Illegal user name "{uname}"')
             continue
         passwd = input('Plz input password: ')
         if input_to_quit(passwd):
             return
-        if not passwd.isascii():
+        if not passwd.isprintable():
             print(f'Illegal password "{passwd}"')
             continue
         if jdg(uname, passwd, get_hash, CONST_BYTES):

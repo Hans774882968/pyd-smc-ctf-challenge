@@ -54,7 +54,8 @@ decider = DllFile(get_dll_path('decider.pyd.dll'), {
 })
 prepare_enc_key = [55, 228, 83, 146, 49, 220, 225, 87, 135, 171, 147, 50, 87, 250]
 prepare = DllFile(get_dll_path('prepare.pyd.dll'), {
-    'prepare_const_bytes': (prepare_enc_key, 0x38BB11541 - 0x38BB11370)
+    'prepare_const_bytes': (prepare_enc_key, 0x38BB11541 - 0x38BB11370),
+    'is_legal_uname': (prepare_enc_key, 0x38BB116A6 - 0x38BB11542),
 })
 
 

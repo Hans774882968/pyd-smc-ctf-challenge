@@ -6,6 +6,8 @@
 
 ## 引言
 
+![](./README_assets/0-谁会二进制逆向.jpg)
+
 在[我前些天产出的blog](https://www.52pojie.cn/thread-1923720-1-1.html)里介绍了如何用`setuptools`编译出pyd文件并调用之。于是我进一步地希望能够直接用g++和`cmake`编译出pyd文件，因为做到这件事以后能做的事太多了，比如下文实战案例将要展示的，引入一些二进制逆向tricks。无奈网上几乎没有这方面的资料，于是有了这篇~~精华~~水blog。
 
 [本文项目GitHub传送门](https://github.com/Hans774882968/pyd-smc-ctf-challenge)
@@ -18,6 +20,8 @@
 - Python 3.7.6 pytest 7.4.4 setuptools 68.0.0
 - `g++.exe (x86_64-win32-seh-rev1, Built by MinGW-Builds project) 13.1.0` from [here](https://whitgit.whitworth.edu/tutorials/installing_mingw_64)
 - cmake 3.27.0
+- pyinstaller 4.10
+- upx 3.96
 
 ## 如何直接用g++和cmake编译出pyd文件
 
@@ -118,7 +122,27 @@ from decider import jdg
 
 ## 用pyinstaller打包为exe
 
-TODO
+生成spec文件：
+
+```bash
+pyi-makespec --icon assets/pyd-smc-ctf-challenge.ico -F pyd-smc-ctf-challenge.py
+```
+
+编辑`pyd-smc-ctf-challenge.spec`。把`datas=[],`改成`datas=[('.\\*.txt', '.'), ],`。然后执行命令：
+
+```bash
+pyinstaller -F pyd-smc-ctf-challenge.spec
+```
+
+输入`pyinstaller --help`可知`-F`作用：`-F, --onefile         Create a one-file bundled executable.`
+
+最终exe生成在dist文件夹下，7557KB。可以指定upx路径来缩小最终生成的exe的大小，实测指定后产物大小变为6540KB。命令：
+
+```bash
+pyinstaller -F pyd-smc-ctf-challenge.spec --upx-dir D:\upx-3.96-win64
+```
+
+此时你可能会好奇`lyric.txt`在哪里。根据[官方文档](https://pyinstaller.org/en/v4.10/operating-mode.html#how-the-one-file-program-works)，它在`%homepath%\AppData\Local\Temp\_MEIxxxxxx`。这个文件夹里除了`lyric.txt`，还有很多程序运行必不可少的文件，比如上文生成的`decider.pyd`。它在程序运行时创建，在程序退出后删除。
 
 ## 参考资料
 
